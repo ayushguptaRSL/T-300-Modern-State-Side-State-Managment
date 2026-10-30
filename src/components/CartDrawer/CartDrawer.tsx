@@ -1,5 +1,6 @@
 import type { CartItem } from '../../types';
 import { useCartState } from '../../context';
+import { selectCartTotal, useCartStore } from '../../store/cartStore';
 import { CartItemsList } from './CartItemsList';
 
 interface CartDrawerProps {
@@ -21,11 +22,9 @@ export function CartDrawer({
 }: CartDrawerProps) {
   const contextItems = useCartState();
   const cartItems = items ?? contextItems;
-
-  const total = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0,
-  );
+  const storeTotal = useCartStore(selectCartTotal);
+  const checkoutStatus = useCartStore((state) => state.checkoutStatus);
+  const total = items ? selectCartTotal({ items }) : storeTotal;
 
   return (
     <>
@@ -70,8 +69,9 @@ export function CartDrawer({
               type="button"
               className="checkout-btn"
               onClick={onCheckout}
+              disabled={checkoutStatus === 'submitting'}
             >
-              Checkout
+              {checkoutStatus === 'submitting' ? 'Submitting...' : 'Checkout'}
             </button>
           </div>
         )}
