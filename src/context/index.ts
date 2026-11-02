@@ -4,6 +4,10 @@ export {
   useCartDispatch,
   useCartActions,
   useCart,
-  CartStateContext,
-  CartDispatchContext,
 } from './cartContext';
+export {
+  useCartStore,
+  selectCartTotal,
+  type CartStore,
+  type CheckoutStatus,
+} from '../store/cartStore';

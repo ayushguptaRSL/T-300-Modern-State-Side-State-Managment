@@ -1,4 +1,4 @@
-import type { Product, CheckoutResult } from '../types';
+import type { CartItem, CheckoutResult, Product } from '../types';
 
 export async function getProducts(): Promise<Product[]> {
   const res = await fetch('/api/products');
@@ -9,7 +9,7 @@ export async function getProducts(): Promise<Product[]> {
 }
 
 export async function createOrder(orderPayload: {
-  items: unknown[];
+  items: CartItem[];
   total: number;
 }): Promise<CheckoutResult> {
   const res = await fetch('/api/orders', {

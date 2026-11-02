@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import type { Product } from '../../types';
-import { useCartDispatch } from '../../context';
+import { useCartStore } from '../../store/cartStore';
 
 interface ProductCardProps {
   product: Product;
@@ -11,13 +11,13 @@ export const ProductCard = memo(function ProductCard({
   product,
   onAddToCart,
 }: ProductCardProps) {
-  const dispatch = useCartDispatch();
+  const addItem = useCartStore((state) => state.addItem);
 
   const handleAdd = () => {
     if (onAddToCart) {
       onAddToCart(product);
     } else {
-      dispatch({ type: 'ADD_ITEM', payload: product });
+      addItem(product);
     }
   };
 

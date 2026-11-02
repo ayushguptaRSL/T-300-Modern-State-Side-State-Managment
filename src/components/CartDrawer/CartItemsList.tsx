@@ -1,5 +1,6 @@
 import type { CartItem } from '../../types';
-import { useCartDispatch, useCartState } from '../../context';
+import { useCartState } from '../../context';
+import { useCartStore } from '../../store/cartStore';
 
 interface CartItemsListProps {
   items?: CartItem[];
@@ -13,7 +14,8 @@ export function CartItemsList({
   onUpdateQuantity,
 }: CartItemsListProps) {
   const contextItems = useCartState();
-  const dispatch = useCartDispatch();
+  const removeItem = useCartStore((state) => state.removeItem);
+  const updateQuantity = useCartStore((state) => state.updateQuantity);
 
   const cartItems = items ?? contextItems;
 
@@ -21,7 +23,7 @@ export function CartItemsList({
     if (onRemove) {
       onRemove(id);
     } else {
-      dispatch({ type: 'REMOVE_ITEM', payload: id });
+      removeItem(id);
     }
   };
 
@@ -29,7 +31,7 @@ export function CartItemsList({
     if (onUpdateQuantity) {
       onUpdateQuantity(id, quantity);
     } else {
-      dispatch({ type: 'UPDATE_QUANTITY', payload: { productId: id, quantity } });
+      updateQuantity(id, quantity);
     }
   };
 
