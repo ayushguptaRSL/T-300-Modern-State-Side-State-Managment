@@ -1,7 +1,8 @@
 import type { CartItem } from '../../types';
-import { useCartState } from '../../context';
 import { selectCartTotal, useCartStore } from '../../store/cartStore';
+import { CartErrorBanner } from './CartErrorBanner';
 import { CartItemsList } from './CartItemsList';
+import { CheckoutButton } from './CheckoutButton';
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -20,10 +21,10 @@ export function CartDrawer({
   onUpdateQuantity,
   onCheckout,
 }: CartDrawerProps) {
-  const contextItems = useCartState();
-  const cartItems = items ?? contextItems;
+  const storeItems = useCartStore((state) => state.items);
   const storeTotal = useCartStore(selectCartTotal);
-  const checkoutStatus = useCartStore((state) => state.checkoutStatus);
+
+  const cartItems = items ?? storeItems;
   const total = items ? selectCartTotal({ items }) : storeTotal;
 
   return (
@@ -51,9 +52,11 @@ export function CartDrawer({
           </button>
         </div>
 
+        <CartErrorBanner />
+
         <div className="drawer-body">
           <CartItemsList
-            items={cartItems}
+            items={items}
             onRemove={onRemove}
             onUpdateQuantity={onUpdateQuantity}
           />
@@ -65,14 +68,7 @@ export function CartDrawer({
               <span className="total-label">Total:</span>
               <span className="total-amount">${total.toFixed(2)}</span>
             </div>
-            <button
-              type="button"
-              className="checkout-btn"
-              onClick={onCheckout}
-              disabled={checkoutStatus === 'submitting'}
-            >
-              {checkoutStatus === 'submitting' ? 'Submitting...' : 'Checkout'}
-            </button>
+            <CheckoutButton onTrigger={onCheckout} />
           </div>
         )}
       </aside>
