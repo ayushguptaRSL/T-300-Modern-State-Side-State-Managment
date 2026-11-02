@@ -1,4 +1,4 @@
-import { useCartState } from '../../context';
+import { useCartStore } from '../../store/cartStore';
 
 interface CartBadgeProps {
   count?: number;
@@ -6,8 +6,9 @@ interface CartBadgeProps {
 }
 
 export function CartBadge({ count, onClick }: CartBadgeProps) {
-  const cart = useCartState();
-  const totalCount = count ?? cart.reduce((sum, item) => sum + item.quantity, 0);
+  const storeItems = useCartStore((state) => state.items);
+  const totalCount =
+    count ?? storeItems.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
     <button

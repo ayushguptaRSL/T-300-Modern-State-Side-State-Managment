@@ -1,5 +1,4 @@
 import type { CartItem } from '../../types';
-import { useCartState } from '../../context';
 import { useCartStore } from '../../store/cartStore';
 
 interface CartItemsListProps {
@@ -13,11 +12,11 @@ export function CartItemsList({
   onRemove,
   onUpdateQuantity,
 }: CartItemsListProps) {
-  const contextItems = useCartState();
+  const storeItems = useCartStore((state) => state.items);
   const removeItem = useCartStore((state) => state.removeItem);
   const updateQuantity = useCartStore((state) => state.updateQuantity);
 
-  const cartItems = items ?? contextItems;
+  const cartItems = items ?? storeItems;
 
   const handleRemove = (id: string) => {
     if (onRemove) {

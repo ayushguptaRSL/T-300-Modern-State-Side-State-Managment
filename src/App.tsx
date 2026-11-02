@@ -1,42 +1,46 @@
 import { useState } from 'react';
-import { CartProvider } from './context';
+import { CheckoutContext } from './context/CheckoutContext';
+import { CartSynchronizer } from './components/bridges/CartSynchronizer';
+import { OrderCompletionBridge } from './components/bridges/OrderCompletionBridge';
 import { Header } from './components/Header/Header';
 import { Catalog } from './components/Catalog/Catalog';
 import { CartDrawer } from './components/CartDrawer/CartDrawer';
-import { useCartStore } from './store/cartStore';
-import { useShallow } from 'zustand/react/shallow';
+import { PaymentPanel } from './components/PaymentPanel/PaymentPanel';
 
 function AppContent() {
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const { checkout, clearCart } = useCartStore(
-    useShallow(({ checkout, clearCart }) => ({ checkout, clearCart })),
-  );
+  const [isPaymentOpen, setIsPaymentOpen] = useState(false);
 
-  const handleCheckout = async () => {
-    try {
-      await checkout();
-      clearCart();
-      setIsCartOpen(false);
-      alert('Order placed successfully.');
-    } catch (error) {
-      alert(
-        error instanceof Error
-          ? error.message
-          : 'Checkout failed. Please try again.',
-      );
-    }
+  const handleOpenPayment = () => {
+    setIsCartOpen(false);
+    setIsPaymentOpen(true);
+  };
+
+  const handleBackToCart = () => {
+    setIsPaymentOpen(false);
+    setIsCartOpen(true);
   };
 
   return (
     <div className="app-container">
-      <Header onOpenCart={() => setIsCartOpen(true)} />
+      <CartSynchronizer />
+      <OrderCompletionBridge />
+      <Header
+        onOpenCart={() => setIsCartOpen(true)}
+        onOpenPayment={() => setIsPaymentOpen(true)}
+      />
       <main className="main-content">
         <Catalog />
       </main>
       <CartDrawer
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
-        onCheckout={() => void handleCheckout()}
+        onCheckout={handleOpenPayment}
+      />
+      <PaymentPanel
+        isOpen={isPaymentOpen}
+        onClose={() => setIsPaymentOpen(false)}
+        onBackToCart={handleBackToCart}
       />
     </div>
   );
@@ -44,9 +48,9 @@ function AppContent() {
 
 function App() {
   return (
-    <CartProvider>
+    <CheckoutContext.Provider>
       <AppContent />
-    </CartProvider>
+    </CheckoutContext.Provider>
   );
 }
 
