@@ -1,5 +1,6 @@
+import { useAtomValue, useSetAtom } from 'jotai';
 import type { CartItem } from '../../types';
-import { useCartDispatch, useCartState } from '../../context';
+import { cartItemsAtom, removeItemAtom, updateQuantityAtom } from '../../atoms';
 
 interface CartItemsListProps {
   items?: CartItem[];
@@ -12,16 +13,17 @@ export function CartItemsList({
   onRemove,
   onUpdateQuantity,
 }: CartItemsListProps) {
-  const contextItems = useCartState();
-  const dispatch = useCartDispatch();
+  const defaultItems = useAtomValue(cartItemsAtom);
+  const removeItem = useSetAtom(removeItemAtom);
+  const updateQuantity = useSetAtom(updateQuantityAtom);
 
-  const cartItems = items ?? contextItems;
+  const cartItems = items ?? defaultItems;
 
   const handleRemove = (id: string) => {
     if (onRemove) {
       onRemove(id);
     } else {
-      dispatch({ type: 'REMOVE_ITEM', payload: id });
+      removeItem(id);
     }
   };
 
@@ -29,7 +31,7 @@ export function CartItemsList({
     if (onUpdateQuantity) {
       onUpdateQuantity(id, quantity);
     } else {
-      dispatch({ type: 'UPDATE_QUANTITY', payload: { productId: id, quantity } });
+      updateQuantity({ productId: id, quantity });
     }
   };
 

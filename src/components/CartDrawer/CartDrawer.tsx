@@ -1,5 +1,6 @@
+import { useAtomValue } from 'jotai';
 import type { CartItem } from '../../types';
-import { useCartState } from '../../context';
+import { cartItemsAtom, totalCartPriceAtom } from '../../atoms';
 import { CartItemsList } from './CartItemsList';
 
 interface CartDrawerProps {
@@ -19,13 +20,13 @@ export function CartDrawer({
   onUpdateQuantity,
   onCheckout,
 }: CartDrawerProps) {
-  const contextItems = useCartState();
-  const cartItems = items ?? contextItems;
+  const defaultItems = useAtomValue(cartItemsAtom);
+  const derivedTotal = useAtomValue(totalCartPriceAtom);
 
-  const total = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0,
-  );
+  const cartItems = items ?? defaultItems;
+  const total = items
+    ? items.reduce((sum, item) => sum + item.price * item.quantity, 0)
+    : derivedTotal;
 
   return (
     <>
