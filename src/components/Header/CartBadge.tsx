@@ -1,4 +1,5 @@
-import { useCartState } from '../../context';
+import { useAtomValue } from 'jotai';
+import { totalItemCountAtom } from '../../atoms';
 
 interface CartBadgeProps {
   count?: number;
@@ -6,8 +7,8 @@ interface CartBadgeProps {
 }
 
 export function CartBadge({ count, onClick }: CartBadgeProps) {
-  const cart = useCartState();
-  const totalCount = count ?? cart.reduce((sum, item) => sum + item.quantity, 0);
+  const derivedCount = useAtomValue(totalItemCountAtom);
+  const totalCount = count ?? derivedCount;
 
   return (
     <button
